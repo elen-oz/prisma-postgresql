@@ -5,7 +5,7 @@ import { authOptions } from '../auth/[...nextauth]/options';
 
 export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
-    if (!session) {
+    if (!session || !session.user?.email) {
         return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
         data: {
             title: title,
             content: content,
-            author: { connect: { email: session.user?.email } },
+            author: { connect: { email: session.user.email } },
         },
     });
     return NextResponse.json(result);
